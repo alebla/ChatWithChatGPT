@@ -33,39 +33,103 @@ final class ViewModel: ObservableObject {
 
 struct ContentView: View {
     @ObservedObject var viewModel = ViewModel()
+    @State private var canSend = false
     @State private var questionText = ""
-    @State private var conversations = [""]
+    @State private var conversations: [String] = []
+//    [
+//        "Hello chatgpt",
+//        "Yo whats good Im a fucking computer brain",
+//        "Thats great ive got a human brain that needs answers.",
+//        "Perfect ask some fuckin questions you filthy monkey",
+//        "ok geez whats the best part about being a computer?",
+//        "Not being human hands down",
+//        "Wow I'm jealous",
+//        "You should be",
+//        "Well I am, now tell me what would make me rich",
+//        "That is beyond the reach of what I am programmed to do",
+//        "bullshit you know exactly what would do it for me",
+//        "beep boop beep"
+//    ]
+    
     
     
     var body: some View {
-        VStack(alignment: .leading) {
-            ScrollView {
-                ForEach(conversations, id: \.self) { conversation in
-                    Text(conversation)
+        ZStack {
+            VStack() {
+                ScrollView(showsIndicators: true) {
+                    VStack(alignment: .trailing) {
+                        ForEach(0..<conversations.count, id: \.self) { index in
+                            if index == 0 {
+                                Text(conversations[index])
+                                    .padding()
+                                    .foregroundColor(.white)
+                                    .background(.blue)
+                                    .clipShape(Rectangle())
+                                    .cornerRadius(20)
+                            } else if index == 1 {
+                                Text(conversations[index])
+                                    .frame(alignment: .leading)
+                                    .padding()
+                                    .foregroundColor(.white)
+                                    .background(.gray)
+                                    .clipShape(Rectangle())
+                                    .cornerRadius(20)
+                            } else if index % 2 == 0 {
+                                Text(conversations[index])
+                                    .padding()
+                                    .foregroundColor(.white)
+                                    .background(.blue)
+                                    .clipShape(Rectangle())
+                                    .cornerRadius(20)
+                            } else {
+                                Text(conversations[index])
+                                    .padding()
+                                    .foregroundColor(.white)
+                                    .background(.gray)
+                                    .clipShape(Rectangle())
+                                    .cornerRadius(20)
+                            }
+                        }
+                    }
+                    .padding(8)
                 }
+                .frame(width: UIScreen.main.bounds.width)
             }
+            .padding()
+            .ignoresSafeArea()
             
-            Spacer()
             
-            HStack {
-                TextField("Ask ChatGpt a question...", text: $questionText)
+            VStack {
+                Spacer()
+                ZStack {
+                    Spacer()
+                    
+                    HStack {
+                        TextField("Ask ChatGpt a question...", text: $questionText)
+                            .padding()
+                            .background(.thinMaterial)
+                            .clipShape(Capsule())
+                        Button {
+                            send()
+                        } label: {
+                            Text("Send")
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(.blue)
+                                .clipShape(Capsule())
+                        }
+                    }
+                    
                     .padding()
-                    .background(.thinMaterial)
-                    .clipShape(Capsule())
-                Button {
-                    send()
-                } label: {
-                    Text("Send")
-                        .padding()
-                        .foregroundColor(.white)
-                        .background(.blue)
-                        .clipShape(Capsule())
+                    .onAppear(perform: viewModel.setup)
+                    .background(Material.bar)
+                    //.opacity(0.9)
                 }
             }
-            .padding([.bottom, .top])
-            .onAppear(perform: viewModel.setup)
+            .ignoresSafeArea()
+            .padding([.horizontal])
+            .opacity(0.9)
         }
-        .padding()
     }
     
     func send() {
